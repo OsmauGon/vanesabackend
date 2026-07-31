@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Mascota {
+  id       Int     @id @default(autoincrement())
+  nombre   String
+  especie  String
+  duenioId Int
+  Usuario  Usuario @relation(fields: [duenioId], references: [id])
+}
+
+model Usuario {
+  id       Int       @id @default(autoincrement())
+  nombre   String
+  email    String    @unique
+  creadoEn DateTime  @default(now())
+  Mascota  Mascota[]
+}
+
+model Veterinaria {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  direccion String
+  telefono  String
+  email     String   @unique
+  servicios String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Professional {
+  id                 Int       @id @default(autoincrement())
+  nombre             String
+  imagen             String
+  horario            String?
+  servicios          String[]
+  telefono           String?
+  email              String?
+  redSocial          String?
+  finDeSuscripcion   DateTime
+  insignias          String[]
+  ubicacion          String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+model Establishment {
+  id                       Int       @id @default(autoincrement())
+  nombre                   String
+  imagen                   String
+  horario                  String
+  servicios                String[]
+  telefono                 String[]
+  email                    String?
+  redSocial                String?
+  finDeSuscripcion         DateTime
+  insignias                String[]
+  profesionalesVinculados  String[]
+  ubicacion                String?
+  latitud                  Float?
+  longitud                 Float?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+enum MissingPostType {
+  EXTRAVIADO
+  ENCONTRADO
+  ADOPCION
+}
+model MissingPost {
+  id          Int             @id @default(autoincrement())
+  imageUrl    String
+  title       String?
+  description String?
+  location    String?
+  contact     String
+  tipo        MissingPostType
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+
+model Event {
+  id           Int        @id @default(autoincrement())
+  titulo       String
+  fecha        String
+  hora         String
+  tipo         String
+  responsable  String
+  ubicacion    String
+  contacto     String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum BlogState {
+  ABLE
+  DISABLE
+  STANDBY
+}
+
+model Blog {
+  id           Int        @id @default(autoincrement())
+  idOwner      Int
+  title        String
+  description  String
+  documentUrl  String?
+  imageUrl     String?
+  videoUrl     String?
+  state        BlogState  @default(STANDBY)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum AdvertisementState {
+  ACTIVE
+  INACTIVE
+}
+
+model Publicidad {
+  id                 Int                 @id @default(autoincrement())
+  titulo             String
+  finDeSuscripcion   DateTime
+  imageUrlGrande     String?
+  imageUrlChico      String?
+  contacto           String
+  state              AdvertisementState @default(ACTIVE)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+
+
+

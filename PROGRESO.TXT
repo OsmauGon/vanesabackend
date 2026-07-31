@@ -1,0 +1,105 @@
+Registro de hoy 26/7/2026
+Configuramos index.ts para levantar el servidor con Express y Prisma.
+
+Creamos un middleware de verificación que intercepta todas las solicitudes y por ahora las deja pasar.
+
+Ajustamos el tsconfig.json para que compile correctamente con index.ts en la raíz.
+
+Instalamos y configuramos Prisma con el nuevo sistema de driver adapters (@prisma/adapter-pg).
+
+Corregimos el error de PrismaClientInitializationError inicializando con el adaptador de Postgres.
+
+Solucionamos errores de compilación relacionados con exactOptionalPropertyTypes.
+
+Validamos la existencia de DATABASE_URL en prisma.config.ts (Opción 1: lanzar error si no está definida).
+
+Reinstalamos dependencias clave (typescript, ts-node, @types/node) para alinear versiones.
+
+Probamos levantar el servidor con npm run dev y confirmamos que en el navegador aparece el mensaje “Servidor corriendo 🚀”.
+
+Cambiamos la contraseña de Postgres y actualizamos la conexión en DATABASE_URL.
+
+📌 Para mañana
+Definir la estructura de carpetas:
+
+routes/ → endpoints por recurso (usuarios, mascotas, turnos).
+
+controllers/ → lógica de negocio separada.
+
+middlewares/ → validaciones y seguridad.
+
+Crear el primer endpoint real con Prisma, por ejemplo:
+
+GET /usuarios → devolver lista de usuarios desde la base.
+
+Extender el middleware de verificación para:
+
+Validar headers (Authorization).
+
+Preparar soporte para tokens JWT.
+
+Configurar script dev en package.json para correr con npm run dev sin complicaciones.
+
+Probar conexión completa con la base de datos (consulta real a una tabla).
+
+Empezar a definir modelos en schema.prisma para usuarios, mascotas y turnos.
+
+
+DIA 2: Lo que hicimos hoy
+Planteamos la estructura desde cero
+
+/project-root
+ ├── prisma/
+ │    └── schema.prisma        # Modelos y configuración DB
+ ├── src/
+ │    ├── controllers/         # Lógica de negocio (Veterinarias, Profesionales, etc.)
+ │    │    └── veterinaria.controller.ts
+ │    ├── routes/              # Definición de endpoints
+ │    │    └── veterinaria.routes.ts
+ │    ├── middleware/          # Middlewares (auth, logging, error handling)
+ │    │    └── auth.middleware.ts
+ │    ├── utils/               # Helpers (ej. manejo de JWT, validaciones)
+ │    ├── index.ts             # Punto de entrada Express
+ │    └── server.ts            # Configuración del servidor
+ ├── .env                      # Variables locales (Railway usará su panel)
+ ├── package.json
+ ├── tsconfig.json
+ └── Dockerfile                # Opcional, Railway lo soporta
+
+
+Configuraste tu backend con Node + TypeScript.
+Definimos la forma correcta de levantar el servidor (tsc para compilar y nodemon para reiniciar automáticamente).
+Configuramos Prisma con PostgreSQL
+Revisamos el schema.prisma y agregamos el modelo Veterinaria.
+Aprendiste la diferencia entre db pull (cuando la tabla ya existe) y migrate dev (cuando la tabla la crea Prisma).
+Regeneramos el cliente con npx prisma generate para que reconozca los nuevos modelos.
+Solucionamos errores de conexión
+Prisma v7 exige un driver adapter, así que instalamos @prisma/adapter-pg y lo configuramos en utils/prisma.ts.
+Detectamos que tu variable DATABASE_URL no estaba definida, la agregamos en .env y verificamos que Node la lea correctamente.
+Con eso, el backend finalmente levantó sin errores. 🎉
+Armamos un endpoint provisorio de Veterinaria
+Creamos un GET /api/veterinarias que usa prisma.veterinaria.findMany() para devolver los registros de la tabla.
+Probaste levantar el backend y confirmar que responde correctamente (aunque la tabla esté vacía, devuelve []).
+
+
+hacer en dia 3:
+1ro definir los modelos de tablas en shema.prisma (profesionales, veterinarias, etc)
+2do ejecutar npx prisma migrate dev --name create_profesionales (Esto crea la tabla en la base y registra la migración.)
+    o tambien ejecutar npx prisma migrate dev --name create_base_models para crear las 5 de una sola ejecucion
+3ro ejecutar npx prisma generate (Regenerás el cliente)
+4to declaramos una prueba:
+    const clientes = await prisma.cliente.findMany();
+    res.json(clientes);
+
+Siempre que cambies el schema.prisma, regenerá el cliente y recompilá (npx tsc) antes de levantar el backend.
+
+5to crear el controlador (profesional.controller.ts) con sus metodos
+6to definir rutas en Express (routes/profesional.routes.ts)
+7mo montar en index.ts: app.use("/api/profesioales", profesionalesRouter);
+8vo ejecutar npx tsc para actualizar el index.js
+9no probar en postman
+ 
+Dia 3. Cargamos todos los modelos y declaramos los controladores, rutas y endpoints, Para mañana hay que trabajar en cada controlador por separado pero todo funciona hasta ahpra
+
+Dia 4:
+Dejamos listos los controladores y las rutas para las solicitudes globales get ya sea publicas y privadas. Debemos dejar listas las solicitudes post para crear los elementos y empezando con establecimientos necesitamos trabajar con la carga de imagenes. Esto requiere que instalemos dependencias (multer para trabajar configurar los archivos y cloudinary para guardarlos) para eso ejecutamos npm install multer cloudinary
