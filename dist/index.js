@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import authRoutes from './src/routes/auth.js';
@@ -11,6 +12,36 @@ import { router as eventsRouter } from './src/routes/events.routes.js';
 import { router as blogsRouter } from './src/routes/blogs.routes.js';
 import { router as publicidadRouter } from './src/routes/publicidad.routes.js';
 const app = express();
+// Configuración básica: permite todas las solicitudes
+app.use(cors());
+/*
+// Si quieres restringir a tu frontend en Vercel:
+app.use(cors({
+  origin: "https://tu-frontend.vercel.app", // dominio permitido
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, // si usas cookies o headers de autenticación
+}));
+*/
+/*
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "https://publico.midominio.com",   // frontend público
+      "https://admin.vercel.app"         // frontend privado
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Origen no permitido por CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, // se aplicará solo si el cliente envía cookies/headers
+};
+
+app.use(cors(corsOptions));
+*/
 // Adaptador para Postgres
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 export const prisma = new PrismaClient({ adapter });
