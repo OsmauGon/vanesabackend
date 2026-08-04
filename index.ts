@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors'
-import { PrismaPg } from '@prisma/adapter-pg';
 import authRoutes from './src/routes/auth.js'
 import "dotenv/config";
 
