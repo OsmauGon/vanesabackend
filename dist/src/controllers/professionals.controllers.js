@@ -73,6 +73,9 @@ export const createProfessional = [
         if (!nombre || !servicios || !horario || !finDeSuscripcion || !file) {
             return res.status(400).json({
                 error: "Faltan credenciales obligatorias o imagen",
+                data: {
+                    nombre, servicios, horario, finDeSuscripcion
+                }
             });
         }
         try {
@@ -88,13 +91,13 @@ export const createProfessional = [
                     horario,
                     imagen: uploadResult.secure_url,
                     finDeSuscripcion: new Date(finDeSuscripcion),
-                    telefono: JSON.parse(telefono),
+                    telefono: telefono,
                     insignias: JSON.parse(insignias),
                     email,
                     redSocial
                 },
             });
-            res.status(201).json(nueva);
+            res.status(201).json({ message: "EXITO", data: nueva });
         }
         catch (error) {
             console.error("Error al crear profesional:", error);

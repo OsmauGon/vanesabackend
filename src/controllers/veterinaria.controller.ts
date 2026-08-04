@@ -9,6 +9,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 // Configuración de Cloudinary
 cloudinary.config({
+  
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
@@ -97,6 +98,12 @@ export const createVeterinaria = [
     if (!nombre || !servicios || !horario || !finDeSuscripcion || !file) {
       return res.status(400).json({
         error: "Faltan credenciales obligatorias o imagen",
+        data: {
+          nombre,
+          servicios,
+          horario,
+          finDeSuscripcion
+        }
       });
     }
 
@@ -122,7 +129,7 @@ export const createVeterinaria = [
         },
       });
 
-      res.status(201).json(nueva);
+      res.status(201).json({message: "EXITO", data: nueva});
     } catch (error: any) {
       console.error("Error al crear veterinaria:", error);
       res.status(500).json({

@@ -75,6 +75,12 @@ export const createVeterinaria = [
         if (!nombre || !servicios || !horario || !finDeSuscripcion || !file) {
             return res.status(400).json({
                 error: "Faltan credenciales obligatorias o imagen",
+                data: {
+                    nombre,
+                    servicios,
+                    horario,
+                    finDeSuscripcion
+                }
             });
         }
         try {
@@ -97,7 +103,7 @@ export const createVeterinaria = [
                     redSocial
                 },
             });
-            res.status(201).json(nueva);
+            res.status(201).json({ message: "EXITO", data: nueva });
         }
         catch (error) {
             console.error("Error al crear veterinaria:", error);

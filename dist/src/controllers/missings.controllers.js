@@ -1,4 +1,14 @@
 import { prisma } from '../utils/prisma.js'; // instancia de Prisma
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+// Configuración de Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// Middleware de multer para manejar archivos
+const upload = multer({ dest: "uploads/" });
 // Obtener todas las missingPosts
 export const getmissingPosts = async (req, res) => {
     try {
@@ -25,17 +35,45 @@ export const getmissingPostById = async (req, res) => {
     }
 };
 // Crear una nueva missingPost
-export const createmissingPost = async (req, res) => {
-    const { nombre, direccion, telefono, email } = req.body;
-    /* try {
-      const nueva = await prisma.missingPost.create({
-        data: { nombre, direccion, telefono, email },
-      });
-      res.status(201).json(nueva);
-    } catch (error) {
-      res.status(500).json({ error: "Error al crear missingPost" });
-    } */
-};
+export const createmissingPost = [
+    upload.single("imagen"), // 👈 nombre del campo en el formData
+    async (req, res) => {
+        const { title, description, contact, tipo, } = req.body;
+        const file = req.file;
+        if (!title || !description || !contact || !tipo || !file) {
+            return res.status(400).json({
+                error: "Faltan credenciales obligatorias o imagen",
+                data: {
+                    title, description, contact, tipo
+                }
+            });
+        }
+        try {
+            // 📤 Subir imagen a Cloudinary
+            const uploadResult = await cloudinary.uploader.upload(file.path, {
+                folder: "profesionales",
+            });
+            // 🗄️ Guardar registro en DB
+            const nueva = await prisma.missingPost.create({
+                data: {
+                    title,
+                    description,
+                    imageUrl: uploadResult.secure_url,
+                    contact,
+                    tipo
+                },
+            });
+            res.status(201).json({ message: "EXITO", data: nueva });
+        }
+        catch (error) {
+            console.error("Error al crear posteo:", error);
+            res.status(500).json({
+                error: "Error interno al crear profesional",
+                details: error.message,
+            });
+        }
+    },
+];
 // Actualizar una missingPost
 export const updatemissingPost = async (req, res) => {
     const { id } = req.params;
