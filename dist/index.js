@@ -56,7 +56,7 @@ app.use("/api/publicidad", publicidadRouter);
 app.get('/', async (req, res) => {
     res.json({ message: 'Servidor de index en raiz funcionando 🚀' });
 });
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendoo en http://localhost:${PORT} en /index`);
 });
