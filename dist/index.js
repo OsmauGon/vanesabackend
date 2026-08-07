@@ -40,6 +40,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 */
+app.set("trust proxy", true);
 app.use(express.json());
 // Middleware de verificación
 app.use((req, res, next) => {
