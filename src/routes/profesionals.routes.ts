@@ -13,6 +13,7 @@ router.get("/private/:id", getprofessionalById);
 
 // Endpoints protegidos (solo admin)
 router.get("/private/", authMiddleware, getPrivateProfessionals);
-router.post("/private/", authMiddleware, createProfessional);
+router.post("/private/", createProfessional);
+//router.post("/private/", authMiddleware, createProfessional);
 router.put("/private/:id", authMiddleware, updateprofessional);
 router.delete("/private/:id", authMiddleware, deleteprofessional);
