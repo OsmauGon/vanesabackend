@@ -60,7 +60,7 @@ export const getpublicidadById = async (req, res) => {
 export const createpublicidad = [
     upload.single("imagen"), // 👈 nombre del campo en el formData
     async (req, res) => {
-        const { titulo, contacto, finDeSuscripcion, telefono, email, redSocial, insignias, ubicacion, } = req.body;
+        const { titulo, contacto, finDeSuscripcion, } = req.body;
         const file = req.file;
         if (!titulo || !contacto || !finDeSuscripcion || !file) {
             return res.status(400).json({

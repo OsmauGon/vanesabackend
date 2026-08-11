@@ -116,6 +116,7 @@ export const createVeterinaria = [
       // 🗄️ Guardar registro en DB
       const nueva = await prisma.establishment.create({
         data: {
+          ubicacion,
           nombre,
           servicios: JSON.parse(servicios),
           horario,
@@ -125,7 +126,9 @@ export const createVeterinaria = [
           insignias: JSON.parse(insignias),
           profesionalesVinculados: JSON.parse(profesionalesVinculados),
           email,
-          redSocial
+          redSocial,
+          latitud : parseFloat(latitud),
+          longitud: parseFloat(longitud)
         },
       });
 
@@ -145,7 +148,7 @@ export const updateVeterinaria = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { nombre, direccion, telefono, email } = req.body;
   try {
-    const actualizada = await prisma.veterinaria.update({
+    const actualizada = await prisma.establishment.update({
       where: { id: Number(id) },
       data: { nombre, direccion, telefono, email },
     });
@@ -159,7 +162,7 @@ export const updateVeterinaria = async (req: Request, res: Response) => {
 export const deleteVeterinaria = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    await prisma.veterinaria.delete({ where: { id: Number(id) } });
+    await prisma.establishment.delete({ where: { id: Number(id) } });
     res.json({ message: "Veterinaria eliminada" });
   } catch (error) {
     res.status(500).json({ error: "Error al eliminar veterinaria" });

@@ -57,15 +57,28 @@ export const getEventoById = async (req: Request, res: Response) => {
 
 // Crear una nueva Evento
 export const createEvento = async (req: Request, res: Response) => {
-  const { nombre, direccion, telefono, email } = req.body;
-  /* try {
+  
+  const { titulo, fecha, hora, tipo, responsable, ubicacion, contacto } = req.body
+  if (!titulo || !fecha || !hora || !ubicacion || !contacto) {
+      return res.status(400).json({
+        error: "Faltan credenciales obligatorias o imagen",
+        data: {
+          titulo, fecha, hora, tipo, responsable, ubicacion, contacto 
+        }
+      });
+    };
+  try {
     const nueva = await prisma.event.create({
-      data: { nombre, direccion, telefono, email },
+      data: { titulo, fecha, hora, tipo, responsable, ubicacion, contacto }
     });
-    res.status(201).json(nueva);
-  } catch (error) {
-    res.status(500).json({ error: "Error al crear Evento" });
-  } */
+    res.status(201).json({message: "EXITO", data: nueva});
+  } catch (error: any) {
+    console.error("Error al crear evento:", error);
+      res.status(500).json({
+        error: "Error interno al crear evento",
+        details: error.message,
+      });
+  } 
 };
 
 // Actualizar una Evento

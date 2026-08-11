@@ -110,6 +110,7 @@ export const createProfessional = [
           telefono: telefono,
           insignias: JSON.parse(insignias),
           email,
+          ubicacion,
           redSocial
         },
       });

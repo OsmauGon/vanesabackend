@@ -67,11 +67,6 @@ export const createpublicidad = [
     const { titulo,
       contacto, 
       finDeSuscripcion, 
-      telefono, 
-      email, 
-      redSocial,
-      insignias,
-      ubicacion,
      } = req.body;
     const file = req.file;
 
