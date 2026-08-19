@@ -58,7 +58,7 @@ export const getprofessionalById = async (req, res) => {
         });
         if (!professional)
             return res.status(404).json({ error: "No encontrada" });
-        res.json(professional);
+        res.json({ message: "ENCONTRADO", data: professional });
     }
     catch (error) {
         res.status(500).json({ error: "Error al obtener professional" });

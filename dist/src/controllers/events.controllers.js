@@ -53,7 +53,6 @@ export const getEventoById = async (req, res) => {
 };
 // Crear una nueva Evento
 export const createEvento = async (req, res) => {
-    console.log(req);
     const { titulo, fecha, hora, tipo, responsable, ubicacion, contacto } = req.body;
     if (!titulo || !fecha || !hora || !ubicacion || !contacto) {
         return res.status(400).json({

@@ -133,6 +133,24 @@ model Publicidad {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
+enum ServiceClass {
+  SERVICIO
+  PRODUCTO
+}
+model Servicio {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  topico      String
+  imagenLogo  String
+  contacto    String
+  telefono    String?
+  redSocial   String?
+  clase       ServiceClass
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 
 
 

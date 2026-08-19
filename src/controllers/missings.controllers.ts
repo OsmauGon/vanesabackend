@@ -90,15 +90,16 @@ export const createmissingPost = [
 // Actualizar una missingPost
 export const updatemissingPost = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre, direccion, telefono, email } = req.body;
+  const { title, description, contact, tipo } = req.body;
   try {
-    const actualizada = await prisma.missingPost.update({
+    const actualizado = await prisma.missingPost.update({
       where: { id: Number(id) },
-      data: { nombre, direccion, telefono, email },
+      data: { title, description, contact, tipo },
     });
-    res.json(actualizada);
+    res.json({message:"PUT EXITOSO", data: actualizado});
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar missingPost" });
+    console.log(error)
+    res.status(500).json("Error al actualizar el recurso")
   }
 };
 

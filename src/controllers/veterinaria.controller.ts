@@ -146,18 +146,41 @@ export const createVeterinaria = [
 // Actualizar una veterinaria
 export const updateVeterinaria = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre, direccion, telefono, email } = req.body;
+  const { nombre, direccion, email, horario, redSocial, ubicacion, latitud, longitud,
+          telefono,
+           servicios,
+            insignias,
+             profesionalesVinculados,
+    } = req.body;
   try {
-    const actualizada = await prisma.establishment.update({
+    const actualizado = await prisma.establishment.update({
       where: { id: Number(id) },
-      data: { nombre, direccion, telefono, email },
+      data: { nombre, direccion, email, horario, redSocial, ubicacion, latitud, longitud,
+              telefono : JSON.parse(telefono),
+               servicios : JSON.parse(servicios),
+                insignias : JSON.parse(insignias),
+                 profesionalesVinculados : JSON.parse(profesionalesVinculados),
+        },
     });
-    res.json(actualizada);
+   res.json({message:"PUT EXITOSO", data: actualizado});
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar veterinaria" });
+    console.log(error)
+    res.status(500).json("Error al actualizar el recurso")
   }
 };
-
+export const patchVeterinaria = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const actualizado = await prisma.establishment.update({
+    where: { id: Number(id) },
+    data: req.body,
+    });
+    res.json({message:"PATCH EXITOSO", data: actualizado});
+  } catch (error) {
+    console.log(error)
+    res.status(500).json("Error al actualizar el recurso")
+  }
+};
 // Eliminar una veterinaria
 export const deleteVeterinaria = async (req: Request, res: Response) => {
   const { id } = req.params;

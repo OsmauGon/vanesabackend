@@ -11,6 +11,8 @@ import { router as missingpostsRouter} from './src/routes/missingposts.routes.js
 import { router as eventsRouter} from './src/routes/events.routes.js'
 import { router as blogsRouter} from './src/routes/blogs.routes.js'
 import { router as publicidadRouter} from './src/routes/publicidad.routes.js'
+import { router as serviceRouter} from './src/routes/servicio.route.js'
+import { prisma } from './src/utils/prisma.js';
 
 const app = express();
 
@@ -54,13 +56,41 @@ app.use((req, res, next) => {
   console.log(`Solicitud recibida: ${req.method} ${req.url}`);
   next();
 });
+
 app.use("/auth", authRoutes);
 app.use("/api/vetes", establishmentsRouter);
 app.use("/api/profes", professionalsRouter)
 app.use("/api/events", eventsRouter);
 app.use("/api/blogs", blogsRouter)
 app.use("/api/missings", missingpostsRouter);
-app.use("/api/publicidad", publicidadRouter)
+app.use("/api/publicidad", publicidadRouter);
+app.use("/api/servis",serviceRouter)
+
+app.get("/api/counts", async (req, res) => {
+  try {
+    const usuariosCount = await prisma.professional.count();
+    const veterinariasCount = await prisma.establishment.count();
+    const blogsCount = await prisma.blog.count();
+    const eventCount = await prisma.event.count();
+    const missingposts = await prisma.missingPost.count();
+    const publicidad = await prisma.publicidad.count();
+    //const servicios = await prisma.publicidad.count();
+
+    res.json({
+      profes: usuariosCount,
+      vetes: veterinariasCount,
+      blogs: blogsCount,
+      events: eventCount,
+      missingposts: missingposts,
+      publicidades: publicidad,
+      servis: 0
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error obteniendo los conteos" });
+  }
+});
+
 
 app.get('/', async (req, res) => {
   res.json({ message: 'Servidor de index en raiz funcionando 🚀' });

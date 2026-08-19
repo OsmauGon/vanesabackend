@@ -1,0 +1,133 @@
+import { prisma } from '../utils/prisma.js'; // instancia de Prisma
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+// Configuración de Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// Middleware de multer para manejar archivos
+const upload = multer({ dest: "uploads/" });
+// GET todos
+export const getPublicServicios = async (req, res) => {
+    try {
+        const servicioss = await prisma.servicio.findMany({
+            select: {
+                id: true,
+                nombre: true,
+                topico: true,
+                descripcion: true,
+                clase: true,
+                imagenLogo: true,
+                contacto: true,
+                telefono: true,
+                redSocial: true
+            }
+        });
+        res.status(200).json({ message: "todo bien", data: servicioss });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Error al obtener los servicios" });
+    }
+};
+export const getPrivateServicios = async (req, res) => {
+    try {
+        const servicioss = await prisma.servicio.findMany();
+        res.status(200).json({ message: "todo bien", data: servicioss });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Error al obtener los servicios" });
+    }
+};
+// Obtener una servicio por ID
+export const getservicioById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const servicio = await prisma.servicio.findUnique({
+            where: { id: Number(id) },
+        });
+        if (!servicio)
+            return res.status(404).json({ error: "No encontrada" });
+        res.json({ message: "ENCONTRADO", data: servicio });
+    }
+    catch (error) {
+        res.status(500).json({ error: "Error al obtener servicio" });
+    }
+};
+// POST crear
+export const createServicio = [
+    upload.single("imagen"), // 👈 nombre del campo en el formData
+    async (req, res) => {
+        const { nombre, telefono, redSocial, topico, descripcion, contacto, clase, } = req.body;
+        const file = req.file;
+        if (!nombre || !topico || !contacto || !descripcion || !file) {
+            return res.status(400).json({
+                error: "Faltan credenciales obligatorias o imagen",
+                data: {
+                    nombre, topico, contacto, descripcion
+                }
+            });
+        }
+        try {
+            // 📤 Subir imagen a Cloudinary
+            const uploadResult = await cloudinary.uploader.upload(file.path, {
+                folder: "profesionales",
+            });
+            // 🗄️ Guardar registro en DB
+            const nueva = await prisma.servicio.create({
+                data: {
+                    nombre,
+                    imagenLogo: uploadResult.secure_url,
+                    telefono,
+                    redSocial,
+                    descripcion,
+                    contacto,
+                    clase,
+                    topico
+                },
+            });
+            res.status(201).json({ message: "EXITO", data: nueva });
+        }
+        catch (error) {
+            console.error("Error al crear servicio:", error);
+            res.status(500).json({
+                error: "Error interno al crear servicio",
+                details: error.message,
+            });
+        }
+    },
+];
+// PUT actualizar completo
+export const updateServicio = async (req, res) => {
+    const { id } = req.params;
+    const { nombre, descripcion, topico, clase, contacto } = req.body;
+    const actualizado = await prisma.servicio.update({
+        where: { id: Number(id) },
+        data: { nombre, descripcion, topico, clase, contacto },
+    });
+    res.json(actualizado);
+};
+// PATCH actualizar parcial
+export const patchServicio = async (req, res) => {
+    const { id } = req.params;
+    const actualizado = await prisma.servicio.update({
+        where: { id: Number(id) },
+        data: req.body,
+    });
+    res.json(actualizado);
+};
+// DELETE
+export const deleteServicio = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.servicio.delete({ where: { id: Number(id) } });
+        res.json({ message: "servicio eliminada" });
+    }
+    catch (error) {
+        res.status(500).json({ error: "Error al eliminar servicio" });
+    }
+};
+//# sourceMappingURL=servicio.controller.js.map
