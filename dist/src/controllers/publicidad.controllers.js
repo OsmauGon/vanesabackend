@@ -99,16 +99,31 @@ export const createpublicidad = [
 // Actualizar una publicidad
 export const updatepublicidad = async (req, res) => {
     const { id } = req.params;
-    const { nombre, direccion, telefono, email } = req.body;
+    const { titulo, finDeSuscripcion, imageUrlChico, contacto, state } = req.body;
     try {
-        const actualizada = await prisma.publicidad.update({
+        const actualizado = await prisma.publicidad.update({
             where: { id: Number(id) },
-            data: { nombre, direccion, telefono, email },
+            data: { titulo, finDeSuscripcion, imageUrlChico, contacto, state },
         });
-        res.json(actualizada);
+        res.json({ message: "PUT EXITOSO", data: actualizado });
     }
     catch (error) {
-        res.status(500).json({ error: "Error al actualizar publicidad" });
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
+    }
+};
+export const patchPublicidad = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const actualizado = await prisma.publicidad.update({
+            where: { id: Number(id) },
+            data: req.body,
+        });
+        res.json({ message: "PATCH EXITOSO", data: actualizado });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
     }
 };
 // Eliminar una publicidad

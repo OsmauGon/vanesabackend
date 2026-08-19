@@ -98,16 +98,17 @@ export const createblog = [
 // Actualizar una blog
 export const updateblog = async (req, res) => {
     const { id } = req.params;
-    const { nombre, direccion, telefono, email } = req.body;
+    const { title, description, documentUrl, videoUrl, state } = req.body;
     try {
-        const actualizada = await prisma.blog.update({
+        const actualizado = await prisma.blog.update({
             where: { id: Number(id) },
-            data: { nombre, direccion, telefono, email },
+            data: { title, description, documentUrl, videoUrl, state },
         });
-        res.json(actualizada);
+        res.json({ message: "PUT EXITOSO", data: actualizado });
     }
     catch (error) {
-        res.status(500).json({ error: "Error al actualizar blog" });
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
     }
 };
 // Eliminar una blog

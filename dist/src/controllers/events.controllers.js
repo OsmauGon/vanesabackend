@@ -80,16 +80,17 @@ export const createEvento = async (req, res) => {
 // Actualizar una Evento
 export const updateEvento = async (req, res) => {
     const { id } = req.params;
-    const { nombre, direccion, telefono, email } = req.body;
+    const { titulo, hora, fecha, tipo, responsable, ubicacion, contacto } = req.body;
     try {
-        const actualizada = await prisma.event.update({
+        const actualizado = await prisma.event.update({
             where: { id: Number(id) },
-            data: { nombre, direccion, telefono, email },
+            data: { titulo, hora, fecha, tipo, responsable, ubicacion, contacto },
         });
-        res.json(actualizada);
+        res.json({ message: "PUT EXITOSO", data: actualizado });
     }
     catch (error) {
-        res.status(500).json({ error: "Error al actualizar Evento" });
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
     }
 };
 // Eliminar una Evento

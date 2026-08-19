@@ -103,22 +103,69 @@ export const createServicio = [
 // PUT actualizar completo
 export const updateServicio = async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, topico, clase, contacto } = req.body;
-    const actualizado = await prisma.servicio.update({
-        where: { id: Number(id) },
-        data: { nombre, descripcion, topico, clase, contacto },
-    });
-    res.json(actualizado);
+    const { nombre, descripcion, topico, clase, contacto, redSocial, telefono } = req.body;
+    try {
+        const actualizado = await prisma.servicio.update({
+            where: { id: Number(id) },
+            data: { nombre, descripcion, topico, clase, contacto, redSocial, telefono },
+        });
+        res.json({ message: "PUT EXITOSO", data: actualizado });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
+    }
 };
 // PATCH actualizar parcial
 export const patchServicio = async (req, res) => {
     const { id } = req.params;
-    const actualizado = await prisma.servicio.update({
-        where: { id: Number(id) },
-        data: req.body,
-    });
-    res.json(actualizado);
+    try {
+        const actualizado = await prisma.servicio.update({
+            where: { id: Number(id) },
+            data: req.body,
+        });
+        res.json({ message: "PATCH EXITOSO", data: actualizado });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
+    }
 };
+/*
+Necesito una funcion para hacer un PATCH que modifique explicitamente la imagen y o el finDeSuscripcion del elemento
+export const patchServicio2 = [
+  upload.single("imagen"),
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const oldServicio = await prisma.servicio.findUnique({ where: { id: Number(id) } });
+
+      let data: any = { ...req.body };
+
+      if (req.file) {
+        // Borrar imagen anterior si existe
+        if (oldServicio?.imagenId) {
+          await cloudinary.uploader.destroy(oldServicio.imagenId);
+        }
+
+        // Subir nueva
+        const result = await cloudinary.uploader.upload(req.file.path, { folder: "servicios" });
+        data.imagen = result.secure_url;
+        data.imagenId = result.public_id;
+      }
+
+      const actualizado = await prisma.servicio.update({
+        where: { id: Number(id) },
+        data,
+      });
+
+      res.json(actualizado);
+    } catch (error) {
+      res.status(400).json({ message: "Error al actualizar servicio", error });
+    }
+  },
+];
+*/
 // DELETE
 export const deleteServicio = async (req, res) => {
     const { id } = req.params;

@@ -112,16 +112,17 @@ export const createProfessional = [
 // Actualizar una professional
 export const updateprofessional = async (req, res) => {
     const { id } = req.params;
-    const { nombre, direccion, telefono, email } = req.body;
+    const { nombre, horario, servicios, telefono, email, redSocial, finDeSuscripcion, insignias, ubicacion, } = req.body;
     try {
         const actualizada = await prisma.professional.update({
             where: { id: Number(id) },
-            data: { nombre, direccion, telefono, email },
+            data: { nombre, horario, servicios, telefono, email, redSocial, finDeSuscripcion, insignias, ubicacion, },
         });
-        res.json(actualizada);
+        res.json({ message: "PUT EXITOSO", data: actualizada });
     }
     catch (error) {
-        res.status(500).json({ error: "Error al actualizar professional" });
+        console.log(error);
+        res.status(500).json("Error al actualizar el recurso");
     }
 };
 // Eliminar una professional
