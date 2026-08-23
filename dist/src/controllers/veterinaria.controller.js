@@ -70,11 +70,11 @@ export const getVeterinariaById = async (req, res) => {
 export const createVeterinaria = [
     upload.single("imagen"), // 👈 nombre del campo en el formData
     async (req, res) => {
-        const { nombre, servicios, horario, finDeSuscripcion, telefono, email, redSocial, insignias, profesionalesVinculados, ubicacion, latitud, longitud } = req.body;
+        const { nombre, servicios, horario, finDeSuscripcion, telefono, email, redSocial, insignias, profesionalesVinculados, ubicacion, latitud, longitud, notas } = req.body;
         const file = req.file;
-        if (!nombre || !servicios || !horario || !finDeSuscripcion || !file) {
+        if (!nombre || !servicios || !horario || !finDeSuscripcion) {
             return res.status(400).json({
-                error: "Faltan credenciales obligatorias o imagen",
+                error: "Faltan credenciales obligatorias",
                 data: {
                     nombre,
                     servicios,
@@ -84,10 +84,13 @@ export const createVeterinaria = [
             });
         }
         try {
-            // 📤 Subir imagen a Cloudinary
-            const uploadResult = await cloudinary.uploader.upload(file.path, {
-                folder: "veterinarias",
-            });
+            let uploadResult = null;
+            // 📤 Subir imagen a Cloudinary solo si existe
+            if (file) {
+                uploadResult = await cloudinary.uploader.upload(file.path, {
+                    folder: "profesionales",
+                });
+            }
             // 🗄️ Guardar registro en DB
             const nueva = await prisma.establishment.create({
                 data: {
@@ -95,7 +98,7 @@ export const createVeterinaria = [
                     nombre,
                     servicios: JSON.parse(servicios),
                     horario,
-                    imagen: uploadResult.secure_url,
+                    imagen: uploadResult ? uploadResult.secure_url : null, // 👈 null si no hay imagen
                     finDeSuscripcion: new Date(finDeSuscripcion),
                     telefono: JSON.parse(telefono),
                     insignias: JSON.parse(insignias),
@@ -103,7 +106,8 @@ export const createVeterinaria = [
                     email,
                     redSocial,
                     latitud: parseFloat(latitud),
-                    longitud: parseFloat(longitud)
+                    longitud: parseFloat(longitud),
+                    notas: notas ? JSON.parse(notas) : []
                 },
             });
             res.status(201).json({ message: "EXITO", data: nueva });

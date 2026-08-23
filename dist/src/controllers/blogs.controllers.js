@@ -60,26 +60,30 @@ export const createblog = [
     async (req, res) => {
         const { title, description, videoUrl, documentUrl, idOwner } = req.body;
         const file = req.file;
-        if (!title || !description || !file) {
+        if (!title || !description) {
             return res.status(400).json({
-                error: "Faltan credenciales obligatorias o imagen",
+                error: "Faltan credenciales obligatorias",
                 data: {
                     title, description,
                 }
             });
         }
         try {
-            // 📤 Subir imagen a Cloudinary
-            const uploadResult = await cloudinary.uploader.upload(file.path, {
-                folder: "profesionales",
-            });
+            let uploadResult = null;
+            // 📤 Subir imagen a Cloudinary solo si existe
+            if (file) {
+                uploadResult = await cloudinary.uploader.upload(file.path, {
+                    folder: "profesionales",
+                });
+            }
+            ;
             // 🗄️ Guardar registro en DB
             const nueva = await prisma.blog.create({
                 data: {
                     title,
                     idOwner: parseInt(idOwner),
                     description,
-                    imageUrl: uploadResult.secure_url,
+                    imageUrl: uploadResult ? uploadResult.secure_url : null, // 👈 null si no hay imagen
                     videoUrl,
                     documentUrl,
                 },

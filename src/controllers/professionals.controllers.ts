@@ -72,32 +72,36 @@ export const getprofessionalById = async (req: Request, res: Response) => {
 export const createProfessional = [
   upload.single("imagen"), // 👈 nombre del campo en el formData
   async (req: Request, res: Response) => {
-    const { nombre, 
-      servicios, 
-      horario, 
-      finDeSuscripcion, 
-      telefono, 
-      email, 
+    const {
+      nombre,
+      servicios,
+      horario,
+      finDeSuscripcion,
+      telefono,
+      email,
       redSocial,
       insignias,
       ubicacion,
-     } = req.body;
+      notas,
+    } = req.body;
     const file = req.file;
 
-    if (!nombre || !servicios || !horario || !finDeSuscripcion || !file) {
+    if (!nombre || !servicios || !finDeSuscripcion) {
       return res.status(400).json({
-        error: "Faltan credenciales obligatorias o imagen",
-        data: {
-          nombre, servicios, horario, finDeSuscripcion
-        }
+        error: "Faltan credenciales obligatorias",
+        data: { nombre, servicios, finDeSuscripcion },
       });
     }
 
     try {
-      // 📤 Subir imagen a Cloudinary
-      const uploadResult = await cloudinary.uploader.upload(file.path, {
-        folder: "profesionales",
-      });
+      let uploadResult: { secure_url: string } | null = null;
+
+      // 📤 Subir imagen a Cloudinary solo si existe
+      if (file) {
+        uploadResult = await cloudinary.uploader.upload(file.path, {
+          folder: "profesionales",
+        });
+      }
 
       // 🗄️ Guardar registro en DB
       const nueva = await prisma.professional.create({
@@ -105,17 +109,18 @@ export const createProfessional = [
           nombre,
           servicios: JSON.parse(servicios),
           horario,
-          imagen: uploadResult.secure_url,
+          imagen: uploadResult ? uploadResult.secure_url : null, // 👈 null si no hay imagen
           finDeSuscripcion: new Date(finDeSuscripcion),
-          telefono: telefono,
-          insignias: JSON.parse(insignias),
+          telefono,
+          insignias: insignias ? JSON.parse(insignias) : [],
           email,
           ubicacion,
-          redSocial
+          redSocial,
+          notas: notas ? JSON.parse(notas) : []
         },
       });
 
-     res.status(201).json({message: "EXITO", data: nueva});
+      res.status(201).json({ message: "EXITO", data: nueva });
     } catch (error: any) {
       console.error("Error al crear profesional:", error);
       res.status(500).json({

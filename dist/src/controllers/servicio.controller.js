@@ -61,32 +61,36 @@ export const getservicioById = async (req, res) => {
 export const createServicio = [
     upload.single("imagen"), // 👈 nombre del campo en el formData
     async (req, res) => {
-        const { nombre, telefono, redSocial, topico, descripcion, contacto, clase, } = req.body;
+        const { nombre, telefono, redSocial, topico, descripcion, contacto, clase, notas } = req.body;
         const file = req.file;
-        if (!nombre || !topico || !contacto || !descripcion || !file) {
+        if (!nombre || !topico) {
             return res.status(400).json({
                 error: "Faltan credenciales obligatorias o imagen",
                 data: {
-                    nombre, topico, contacto, descripcion
+                    nombre, topico, telefono,
                 }
             });
         }
         try {
-            // 📤 Subir imagen a Cloudinary
-            const uploadResult = await cloudinary.uploader.upload(file.path, {
-                folder: "profesionales",
-            });
+            let uploadResult = null;
+            // 📤 Subir imagen a Cloudinary solo si existe
+            if (file) {
+                uploadResult = await cloudinary.uploader.upload(file.path, {
+                    folder: "profesionales",
+                });
+            }
             // 🗄️ Guardar registro en DB
             const nueva = await prisma.servicio.create({
                 data: {
                     nombre,
-                    imagenLogo: uploadResult.secure_url,
+                    imagenLogo: uploadResult ? uploadResult.secure_url : null, // 👈 null si no hay imagen
                     telefono,
                     redSocial,
                     descripcion,
                     contacto,
                     clase,
-                    topico
+                    topico,
+                    notas: notas ? JSON.parse(notas) : []
                 },
             });
             res.status(201).json({ message: "EXITO", data: nueva });

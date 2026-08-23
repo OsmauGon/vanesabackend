@@ -36,7 +36,7 @@ model Veterinaria {
 model Professional {
   id                 Int       @id @default(autoincrement())
   nombre             String
-  imagen             String
+  imagen             String?
   horario            String?
   servicios          String[]
   telefono           String?
@@ -45,13 +45,14 @@ model Professional {
   finDeSuscripcion   DateTime
   insignias          String[]
   ubicacion          String?
+notas			String[]
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
 model Establishment {
   id                       Int       @id @default(autoincrement())
   nombre                   String
-  imagen                   String
+  imagen                   String?
   horario                  String
   servicios                String[]
   telefono                 String[]
@@ -63,6 +64,7 @@ model Establishment {
   ubicacion                String?
   latitud                  Float?
   longitud                 Float?
+notas			String[]
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
 }
@@ -142,11 +144,12 @@ model Servicio {
   nombre      String
   descripcion String
   topico      String
-  imagenLogo  String
+  imagenLogo  String?
   contacto    String
   telefono    String?
   redSocial   String?
   clase       ServiceClass
+notas			String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
