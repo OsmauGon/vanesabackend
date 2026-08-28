@@ -4,5 +4,7 @@ export declare const getPrivateProfessionals: (req: Request, res: Response) => P
 export declare const getprofessionalById: (req: Request, res: Response) => Promise<Response<any, Record<string, any>> | undefined>;
 export declare const createProfessional: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 export declare const updateprofessional: (req: Request, res: Response) => Promise<void>;
+export declare const patchProfesionalSuscripcion: (req: Request, res: Response) => Promise<void>;
+export declare const patchProfesionalImagen: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 export declare const deleteprofessional: (req: Request, res: Response) => Promise<void>;
 //# sourceMappingURL=professionals.controllers.d.ts.map

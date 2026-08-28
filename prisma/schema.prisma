@@ -6,32 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Mascota {
-  id       Int     @id @default(autoincrement())
-  nombre   String
-  especie  String
-  duenioId Int
-  Usuario  Usuario @relation(fields: [duenioId], references: [id])
-}
-
-model Usuario {
-  id       Int       @id @default(autoincrement())
-  nombre   String
-  email    String    @unique
-  creadoEn DateTime  @default(now())
-  Mascota  Mascota[]
-}
-
-model Veterinaria {
-  id        Int      @id @default(autoincrement())
-  nombre    String
-  direccion String
-  telefono  String
-  email     String   @unique
-  servicios String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model Professional {
   id                 Int       @id @default(autoincrement())
@@ -45,7 +19,7 @@ model Professional {
   finDeSuscripcion   DateTime
   insignias          String[]
   ubicacion          String?
-notas			String[]
+  notas			          String[]
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
@@ -80,7 +54,7 @@ model MissingPost {
   title       String?
   description String?
   location    String?
-  contact     String
+  contact     String?
   tipo        MissingPostType
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -95,7 +69,7 @@ model Event {
   tipo         String
   responsable  String
   ubicacion    String
-  contacto     String
+  contacto     String?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -108,7 +82,7 @@ enum BlogState {
 
 model Blog {
   id           Int        @id @default(autoincrement())
-  idOwner      Int
+  idOwner      Int?
   title        String
   description  String
   documentUrl  String?
@@ -142,14 +116,15 @@ enum ServiceClass {
 model Servicio {
   id          Int      @id @default(autoincrement())
   nombre      String
-  descripcion String
+  descripcion String?
   topico      String
   imagenLogo  String?
-  contacto    String
-  telefono    String?
+  contacto    String?
+  telefono    String
   redSocial   String?
   clase       ServiceClass
-notas			String[]
+  notas			String[]
+  finDeSuscripcion   DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

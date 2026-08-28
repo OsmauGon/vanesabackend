@@ -1,7 +1,7 @@
 // src/routes/veterinaria.routes.ts
 // El archivo veterinaria.routes.ts es el que define los endpoints de Express para el recurso Veterinarias. Su función es conectar las rutas HTTP con los controladores que contienen la lógica de negocio.
 import { Router } from "express";
-import { getVeterinariaById, createVeterinaria, updateVeterinaria, deleteVeterinaria, getPrivateVeterinarias, getPublicVeterinarias } from "../controllers/veterinaria.controller.js";
+import { getVeterinariaById, createVeterinaria, updateVeterinaria, deleteVeterinaria, getPrivateVeterinarias, getPublicVeterinarias, patchEstablecimientoSuscripcion } from "../controllers/veterinaria.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 export const router = Router();
 // Endpoints públicos (ej. listado de veterinarias)
@@ -11,5 +11,7 @@ router.get("/private/:id", getVeterinariaById);
 router.get("/private/", authMiddleware, getPrivateVeterinarias);
 router.post("/private/", authMiddleware, createVeterinaria);
 router.put("/private/:id", authMiddleware, updateVeterinaria);
+router.patch("/private/:id", authMiddleware, patchEstablecimientoSuscripcion);
+//router.patch("/image/:id",authMiddleware,patchEstablecimientoImage);
 router.delete("/private/:id", authMiddleware, deleteVeterinaria);
 //# sourceMappingURL=veterinaria.routes.js.map

@@ -36,6 +36,7 @@ export const getPublicProfessionals = async (req: Request, res: Response) => {
         ubicacion: true,
         telefono: true,
         email: true,
+        notas: true
       },
     });
   //gte es expresion q normalmente si querrías mostrar solo los profesionales con suscripción activa, eso se expresa con el operador gte (greater than or equal):
@@ -51,6 +52,7 @@ export const getPrivateProfessionals = async (req: Request, res: Response) => {
     //aqui seria conveniente mantener select
      res.status(200).json({message: "todo bien", data: professionals});
   } catch (error) {
+    
     res.status(500).json({ error: "Error al obtener professionals" });
   }
 };
@@ -134,11 +136,16 @@ export const createProfessional = [
 // Actualizar una professional
 export const updateprofessional = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre, horario, servicios,telefono,email,redSocial,finDeSuscripcion,insignias,ubicacion, } = req.body;
+  const { nombre, horario, servicios,telefono,email,redSocial,finDeSuscripcion,insignias,ubicacion, notas } = req.body;
   try {
+    const antiguo = await prisma.establishment.findUnique({where:{id: Number(id)}})
     const actualizada = await prisma.professional.update({
       where: { id: Number(id) },
-      data: { nombre, horario, servicios,telefono,email,redSocial,finDeSuscripcion,insignias,ubicacion, },
+      data: { nombre, horario, telefono,email,redSocial,finDeSuscripcion,ubicacion, 
+        servicios : servicios ? servicios: antiguo?.servicios,
+        insignias : insignias ? insignias: antiguo?.insignias,
+        notas: notas ? notas: antiguo?.notas, 
+      },
     });
     res.json({message:"PUT EXITOSO", data: actualizada});
   } catch (error) {
@@ -146,6 +153,85 @@ export const updateprofessional = async (req: Request, res: Response) => {
     res.status(500).json("Error al actualizar el recurso")
   }
 };
+export const patchProfesionalSuscripcion = async (req: Request, res: Response) => {
+  /*
+  Este PATCH ea unicamente para actualizar exclusivamente al campo finDeSuscripcion del un registro de Servicio
+  */
+  const { id } = req.params;
+  try {
+    // Extraemos la fecha del body
+    const { finDeSuscripcion } = req.body;
+
+    // Construimos el objeto data
+    const data: any = {};
+
+    if (finDeSuscripcion) {
+      // Convertimos el string a Date
+      data.finDeSuscripcion = new Date(finDeSuscripcion);
+    }
+
+    // Si en el futuro llegan más campos, podés mergearlos:
+    // Object.assign(data, req.body);
+
+    const actualizado = await prisma.professional.update({
+      where: { id: Number(id) },
+      data,
+    });
+
+    res.json({ message: "PATCH EXITOSO", data: actualizado });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Error al actualizar el recurso");
+  }
+};
+export const patchProfesionalImagen = [
+  upload.single("imagen"), // 👈 campo en el formData
+  async (req: Request, res: Response) => {
+    /*
+    Esta funcion debe guardar la nueva imagen en cloudinary, actualizar el registro en la base de datos y borrar la imagen antigua de cloudinary. 
+    El cliente envía un FormData con el campo imagen desde el front-end
+    El servidor busca el registro actual y, si existe una imagen previa, la borra de Cloudinary usando su public_id.
+    Sube la nueva imagen, guarda la URL pública y el public_id en la DB.
+    Devuelve el registro actualizado.
+    */
+    const { id } = req.params;
+
+    try {
+      // Buscar el registro actual
+      const oldServicio = await prisma.professional.findUnique({
+        where: { id: Number(id) },
+      });
+
+      let data: any = { ...req.body };
+
+      if (req.file) {
+        // Si hay imagen nueva, borrar la anterior
+        if (oldServicio?.imagen) {
+          await cloudinary.uploader.destroy(oldServicio.imagen);
+        }
+
+        // Subir nueva imagen
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "servicios", // 👈 carpeta en Cloudinary
+        });
+
+        // Guardar URL y public_id
+        data.imagen = result.secure_url;
+        data.imagenId = result.public_id;
+      }
+
+      const actualizado = await prisma.professional.update({
+        where: { id: Number(id) },
+        data,
+      });
+
+      res.json({ message: "PATCH EXITOSO", data: actualizado });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json("Error al actualizar el recurso");
+    }
+  },
+];
 
 
 // Eliminar una professional
