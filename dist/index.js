@@ -64,7 +64,7 @@ app.get("/api/counts", async (req, res) => {
         const eventCount = await prisma.event.count();
         const missingposts = await prisma.missingPost.count();
         const publicidad = await prisma.publicidad.count();
-        //const servicios = await prisma.publicidad.count();
+        const servicios = await prisma.servicio.count();
         res.json({
             profes: usuariosCount,
             vetes: veterinariasCount,
@@ -72,7 +72,7 @@ app.get("/api/counts", async (req, res) => {
             events: eventCount,
             missingposts: missingposts,
             publicidades: publicidad,
-            servis: 0
+            servis: servicios
         });
     }
     catch (error) {
