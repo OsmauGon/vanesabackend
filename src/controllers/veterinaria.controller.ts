@@ -165,7 +165,8 @@ export const updateVeterinaria = async (req: Request, res: Response) => {
     servicios,
     insignias,
     profesionalesVinculados,
-    notas
+    notas,
+	finDeSuscripcion
     } = req.body;
   try {
     const antiguo = await prisma.establishment.findUnique({where:{id: Number(id)}})
@@ -176,6 +177,7 @@ export const updateVeterinaria = async (req: Request, res: Response) => {
         horario, 
         redSocial, 
         ubicacion, 
+	finDeSuscripcion: new Date(finDeSuscripcion),
         latitud : parseFloat(latitud),
         longitud: parseFloat(longitud),
         telefono : telefono ? telefono : antiguo?.telefono,
@@ -255,7 +257,7 @@ export const patchEstablecimientoImagen = [
 
         // Guardar URL y public_id
         data.imagen = result.secure_url;
-        data.imagenId = result.public_id;
+        //data.imagenId = result.public_id;
       }
 
       const actualizado = await prisma.establishment.update({

@@ -180,8 +180,8 @@ export const patchServicioImagen = [
                     folder: "servicios", // 👈 carpeta en Cloudinary
                 });
                 // Guardar URL y public_id
-                data.imagen = result.secure_url;
-                data.imagenId = result.public_id;
+                data.imagenLogo = result.secure_url;
+                //data.imagenId = result.public_id;
             }
             const actualizado = await prisma.servicio.update({
                 where: { id: Number(id) },

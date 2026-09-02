@@ -8,7 +8,8 @@ import {
   deleteVeterinaria, 
   getPrivateVeterinarias,
   getPublicVeterinarias,
-  patchEstablecimientoSuscripcion
+  patchEstablecimientoSuscripcion,
+  patchEstablecimientoImagen
 } from "../controllers/veterinaria.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
@@ -24,6 +25,6 @@ router.get("/private/", authMiddleware, getPrivateVeterinarias);
 router.post("/private/", authMiddleware, createVeterinaria);
 router.put("/private/:id", authMiddleware, updateVeterinaria);
 router.patch("/private/:id",authMiddleware,patchEstablecimientoSuscripcion);
-//router.patch("/image/:id",authMiddleware,patchEstablecimientoImage);
+router.patch("/image/:id",authMiddleware,patchEstablecimientoImagen);
 
 router.delete("/private/:id", authMiddleware, deleteVeterinaria);

@@ -217,7 +217,7 @@ export const patchProfesionalImagen = [
 
         // Guardar URL y public_id
         data.imagen = result.secure_url;
-        data.imagenId = result.public_id;
+        //data.imagenId = result.public_id;
       }
 
       const actualizado = await prisma.professional.update({
