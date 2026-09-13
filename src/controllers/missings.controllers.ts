@@ -45,16 +45,21 @@ export const createmissingPost = [
     const { title, 
       description, 
       contact, 
-      tipo, 
+      tipo,
+      location, 
       
      } = req.body;
     const file = req.file;
 
-    if (!title || !description || !contact || !tipo || !file) {
+    if (!tipo || !file) {
       return res.status(400).json({
         error: "Faltan credenciales obligatorias o imagen",
         data: {
-          title, description, contact, tipo
+          
+          
+         
+          tipo: tipo  ? "Hay" : "No hay",
+          file: file  ? "Hay" : "No hay"
         }
       });
     }
@@ -62,7 +67,7 @@ export const createmissingPost = [
     try {
       // 📤 Subir imagen a Cloudinary
       const uploadResult = await cloudinary.uploader.upload(file.path, {
-        folder: "profesionales",
+        folder: "veterinet-folder",
       });
 
       // 🗄️ Guardar registro en DB
@@ -72,7 +77,8 @@ export const createmissingPost = [
           description,
           imageUrl: uploadResult.secure_url,
           contact,
-          tipo
+          tipo,
+          location
         },
       });
 
@@ -90,11 +96,11 @@ export const createmissingPost = [
 // Actualizar una missingPost
 export const updatemissingPost = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { title, description, contact, tipo } = req.body;
+  const { title, description, contact, tipo, location } = req.body;
   try {
     const actualizado = await prisma.missingPost.update({
       where: { id: Number(id) },
-      data: { title, description, contact, tipo },
+      data: { title, description, contact, tipo, location},
     });
     res.json({message:"PUT EXITOSO", data: actualizado});
   } catch (error) {
@@ -113,3 +119,51 @@ export const deletemissingPost = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error al eliminar missingPost" });
   }
 };
+export const patchMissingImagen = [
+  upload.single("imagen"), // 👈 campo en el formData
+  async (req: Request, res: Response) => {
+    /*
+    Esta funcion debe guardar la nueva imagen en cloudinary, actualizar el registro en la base de datos y borrar la imagen antigua de cloudinary. 
+    El cliente envía un FormData con el campo imagen desde el front-end
+    El servidor busca el registro actual y, si existe una imagen previa, la borra de Cloudinary usando su public_id.
+    Sube la nueva imagen, guarda la URL pública y el public_id en la DB.
+    Devuelve el registro actualizado.
+    */
+    const { id } = req.params;
+
+    try {
+      // Buscar el registro actual
+      const oldPost = await prisma.missingPost.findUnique({
+        where: { id: Number(id) },
+      });
+
+      let data: any = { ...req.body };
+
+      if (req.file) {
+        // Si hay imagen nueva, borrar la anterior
+        if (oldPost?.imageUrl) {
+          await cloudinary.uploader.destroy(oldPost.imageUrl);
+        }
+
+        // Subir ueva imagen
+        const result = await cloudinary.uploader.upload(req.file.path, {
+           folder: "veterinet-folder",// 👈 carpeta en Cloudinary
+        });
+
+        // Guardar URL y public_id
+        data.imageUrl = result.secure_url
+        //data.imagenId = result.public_id;
+      }
+
+      const actualizado = await prisma.missingPost.update({
+        where: { id: Number(id) },
+        data,
+      });
+
+      res.json({ message: "PATCH EXITOSO", data: actualizado });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json("Error al actualizar el recurso");
+    }
+  },
+];

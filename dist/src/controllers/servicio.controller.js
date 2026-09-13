@@ -78,7 +78,7 @@ export const createServicio = [
             // 📤 Subir imagen a Cloudinary solo si existe
             if (file) {
                 uploadResult = await cloudinary.uploader.upload(file.path, {
-                    folder: "profesionales",
+                    folder: "veterinet-folder",
                 });
             }
             // 🗄️ Guardar registro en DB

@@ -4,4 +4,5 @@ export declare const getmissingPostById: (req: Request, res: Response) => Promis
 export declare const createmissingPost: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 export declare const updatemissingPost: (req: Request, res: Response) => Promise<void>;
 export declare const deletemissingPost: (req: Request, res: Response) => Promise<void>;
+export declare const patchMissingImagen: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 //# sourceMappingURL=missings.controllers.d.ts.map

@@ -3,7 +3,7 @@
 import { Router } from "express";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { createpublicidad, deletepublicidad, getPrivatePublicidads, getpublicidadById, getPublicPublicidads, updatepublicidad } from "../controllers/publicidad.controllers.js";
+import { createpublicidad, deletepublicidad, getPrivatePublicidads, getpublicidadById, getPublicPublicidads, patchImagePublicidad, patchPublicidad, updatepublicidad } from "../controllers/publicidad.controllers.js";
 
 
 export const router = Router();
@@ -16,4 +16,6 @@ router.get("/private/:id", getpublicidadById);
 router.get("/private/", authMiddleware, getPrivatePublicidads);
 router.post("/private/", authMiddleware, createpublicidad);
 router.put("/private/:id", authMiddleware, updatepublicidad);
+router.patch("/private/:id", authMiddleware, patchPublicidad);
+router.patch("/image/:id", authMiddleware, patchImagePublicidad);
 router.delete("/private/:id", authMiddleware, deletepublicidad);

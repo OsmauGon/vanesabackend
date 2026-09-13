@@ -101,7 +101,7 @@ export const createProfessional = [
       // 📤 Subir imagen a Cloudinary solo si existe
       if (file) {
         uploadResult = await cloudinary.uploader.upload(file.path, {
-          folder: "profesionales",
+          folder: "veterinet-folder",
         });
       }
 

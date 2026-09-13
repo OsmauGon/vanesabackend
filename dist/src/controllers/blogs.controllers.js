@@ -60,11 +60,13 @@ export const createblog = [
     async (req, res) => {
         const { title, description, videoUrl, documentUrl, idOwner } = req.body;
         const file = req.file;
-        if (!title || !description) {
+        if (!title || !description || !file) {
             return res.status(400).json({
                 error: "Faltan credenciales obligatorias",
                 data: {
-                    title, description,
+                    title: title ? "Hay titulo" : "No hay titulo",
+                    description: description ? "Hay descripcion" : "No hay descripcion",
+                    file: file ? "Hay una imagen" : "No hay una imagen"
                 }
             });
         }
@@ -73,7 +75,7 @@ export const createblog = [
             // 📤 Subir imagen a Cloudinary solo si existe
             if (file) {
                 uploadResult = await cloudinary.uploader.upload(file.path, {
-                    folder: "profesionales",
+                    folder: "veterinet-folder",
                 });
             }
             ;
@@ -81,7 +83,7 @@ export const createblog = [
             const nueva = await prisma.blog.create({
                 data: {
                     title,
-                    idOwner: parseInt(idOwner),
+                    idOwner: idOwner ? parseInt(idOwner) : null,
                     description,
                     imageUrl: uploadResult ? uploadResult.secure_url : null, // 👈 null si no hay imagen
                     videoUrl,
@@ -126,4 +128,46 @@ export const deleteblog = async (req, res) => {
         res.status(500).json({ error: "Error al eliminar blog" });
     }
 };
+export const patchBlogImagen = [
+    upload.single("imagen"), // 👈 campo en el formData
+    async (req, res) => {
+        /*
+        Esta funcion debe guardar la nueva imagen en cloudinary, actualizar el registro en la base de datos y borrar la imagen antigua de cloudinary.
+        El cliente envía un FormData con el campo imagen desde el front-end
+        El servidor busca el registro actual y, si existe una imagen previa, la borra de Cloudinary usando su public_id.
+        Sube la nueva imagen, guarda la URL pública y el public_id en la DB.
+        Devuelve el registro actualizado.
+        */
+        const { id } = req.params;
+        try {
+            // Buscar el registro actual
+            const oldBlog = await prisma.blog.findUnique({
+                where: { id: Number(id) },
+            });
+            let data = { ...req.body };
+            if (req.file) {
+                // Si hay imagen nueva, borrar la anterior
+                if (oldBlog?.imageUrl) {
+                    await cloudinary.uploader.destroy(oldBlog.imageUrl);
+                }
+                // Subir ueva imagen
+                const result = await cloudinary.uploader.upload(req.file.path, {
+                    folder: "veterinet-folder", // 👈 carpeta en Cloudinary
+                });
+                // Guardar URL y public_id
+                data.imageUrl = result.secure_url;
+                //data.imagenId = result.public_id;
+            }
+            const actualizado = await prisma.blog.update({
+                where: { id: Number(id) },
+                data,
+            });
+            res.json({ message: "PATCH EXITOSO", data: actualizado });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json("Error al actualizar el recurso");
+        }
+    },
+];
 //# sourceMappingURL=blogs.controllers.js.map

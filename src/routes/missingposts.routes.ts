@@ -3,7 +3,7 @@
 import { Router } from "express";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { createmissingPost, deletemissingPost, getmissingPostById, getmissingPosts, updatemissingPost } from "../controllers/missings.controllers.js";
+import { createmissingPost, deletemissingPost, getmissingPostById, getmissingPosts, patchMissingImagen, updatemissingPost } from "../controllers/missings.controllers.js";
 
 
 export const router = Router();
@@ -16,3 +16,4 @@ router.get("/private/:id", getmissingPostById);
 router.post("/private/", authMiddleware, createmissingPost);
 router.put("/private/:id", authMiddleware, updatemissingPost);
 router.delete("/private/:id", authMiddleware, deletemissingPost);
+router.patch("/image/:id", authMiddleware, patchMissingImagen);

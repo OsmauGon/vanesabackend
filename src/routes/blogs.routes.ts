@@ -3,7 +3,7 @@
 import { Router } from "express";
 
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { createblog, deleteblog, getblogById, getPrivateBlogs, getPublicBlogs, updateblog } from "../controllers/blogs.controllers.js";
+import { createblog, deleteblog, getblogById, getPrivateBlogs, getPublicBlogs, patchBlogImagen, updateblog } from "../controllers/blogs.controllers.js";
 
 
 export const router = Router();
@@ -16,4 +16,5 @@ router.get("/private/:id", getblogById);
 router.get("/private/", authMiddleware, getPrivateBlogs);
 router.post("/private/", authMiddleware, createblog);
 router.put("/private/:id", authMiddleware, updateblog);
+router.patch("/image/:id", authMiddleware, patchBlogImagen);
 router.delete("/private/:id", authMiddleware, deleteblog);

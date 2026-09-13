@@ -5,4 +5,5 @@ export declare const getblogById: (req: Request, res: Response) => Promise<Respo
 export declare const createblog: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 export declare const updateblog: (req: Request, res: Response) => Promise<void>;
 export declare const deleteblog: (req: Request, res: Response) => Promise<void>;
+export declare const patchBlogImagen: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 //# sourceMappingURL=blogs.controllers.d.ts.map

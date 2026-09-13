@@ -59,17 +59,28 @@ export const getEventoById = async (req: Request, res: Response) => {
 export const createEvento = async (req: Request, res: Response) => {
   
   const { titulo, fecha, hora, tipo, responsable, ubicacion, contacto } = req.body
-  if (!titulo || !fecha || !hora || !ubicacion || !contacto) {
+  if (!titulo || !fecha || !hora || !ubicacion) {
       return res.status(400).json({
-        error: "Faltan credenciales obligatorias o imagen",
+        error: "Faltan credenciales obligatorias",
         data: {
-          titulo, fecha, hora, tipo, responsable, ubicacion, contacto 
+          titulo : titulo ? "Si hay" : "Falta", 
+          fecha : fecha ? "Si hay" : "Falta", 
+          hora : hora ? "Si hay" : "Falta", 
+          ubicacion : ubicacion ? "Si hay" : "Falta", 
+
         }
       });
     };
   try {
     const nueva = await prisma.event.create({
-      data: { titulo, fecha, hora, tipo, responsable, ubicacion, contacto }
+      data: { titulo, 
+        fecha, 
+        hora, 
+        ubicacion, 
+        tipo: tipo ? tipo : "No asignado", 
+        responsable: responsable ? responsable :"No asinado", 
+        contacto 
+      }
     });
     res.status(201).json({message: "EXITO", data: nueva});
   } catch (error: any) {

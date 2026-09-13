@@ -6,4 +6,5 @@ export declare const createpublicidad: import("express").RequestHandler<import("
 export declare const updatepublicidad: (req: Request, res: Response) => Promise<void>;
 export declare const patchPublicidad: (req: Request, res: Response) => Promise<void>;
 export declare const deletepublicidad: (req: Request, res: Response) => Promise<void>;
+export declare const patchImagePublicidad: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>[];
 //# sourceMappingURL=publicidad.controllers.d.ts.map
