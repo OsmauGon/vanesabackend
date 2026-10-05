@@ -22,7 +22,8 @@ export const getPublicServicios = async (req, res) => {
                 imagenLogo: true,
                 contacto: true,
                 telefono: true,
-                redSocial: true
+                redSocial: true,
+                notas: true
             }
         });
         res.status(200).json({ message: "todo bien", data: servicioss });

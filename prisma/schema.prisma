@@ -85,6 +85,7 @@ model Blog {
   idOwner      Int?
   title        String
   description  String
+  bigdescription String?
   documentUrl  String?
   imageUrl     String?
   videoUrl     String?

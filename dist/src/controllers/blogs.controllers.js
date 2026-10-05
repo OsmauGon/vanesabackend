@@ -18,6 +18,7 @@ export const getPublicBlogs = async (req, res) => {
                 idOwner: true,
                 title: true,
                 description: true,
+                bigdescription: true,
                 imageUrl: true,
                 videoUrl: true,
                 documentUrl: true,
@@ -58,7 +59,7 @@ export const getblogById = async (req, res) => {
 export const createblog = [
     upload.single("imagen"), // 👈 nombre del campo en el formData
     async (req, res) => {
-        const { title, description, videoUrl, documentUrl, idOwner } = req.body;
+        const { title, description, bigdescription, videoUrl, documentUrl, idOwner } = req.body;
         const file = req.file;
         if (!title || !description || !file) {
             return res.status(400).json({
@@ -85,6 +86,7 @@ export const createblog = [
                     title,
                     idOwner: idOwner ? parseInt(idOwner) : null,
                     description,
+                    bigdescription,
                     imageUrl: uploadResult ? uploadResult.secure_url : null, // 👈 null si no hay imagen
                     videoUrl,
                     documentUrl,
@@ -104,11 +106,11 @@ export const createblog = [
 // Actualizar una blog
 export const updateblog = async (req, res) => {
     const { id } = req.params;
-    const { title, description, documentUrl, videoUrl, state } = req.body;
+    const { title, description, bigdescription, documentUrl, videoUrl, state } = req.body;
     try {
         const actualizado = await prisma.blog.update({
             where: { id: Number(id) },
-            data: { title, description, documentUrl, videoUrl, state },
+            data: { title, description, bigdescription, documentUrl, videoUrl, state },
         });
         res.json({ message: "PUT EXITOSO", data: actualizado });
     }
